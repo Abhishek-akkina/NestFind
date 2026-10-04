@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Properties | NestFind</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    >
+
+    <!-- Main CSS -->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <style>
+
+        /* =========================================
+           PROPERTIES PAGE
+        ========================================= */
+
+        .properties-hero {
+            background: linear-gradient(
+                135deg,
+                #f5f7fb,
+                #eef3ff
+            );
+            padding: 65px 0 50px;
+        }
+
+        .properties-hero h1 {
+            font-size: 42px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .properties-hero p {
+            max-width: 650px;
+            font-size: 17px;
+        }
+
+
+        /* =========================================
+           FILTER BOX
+        ========================================= */
+
+        .properties-filter {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 28px;
+            margin-top: -30px;
+            position: relative;
+            z-index: 5;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+        }
+
+        .properties-filter .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 7px;
+        }
+
+        .properties-filter .form-control,
+        .properties-filter .form-select {
+            min-height: 45px;
+            border-radius: 8px;
+            border: 1px solid #d9dee7;
+            font-size: 14px;
+        }
+
+        .properties-filter .form-control:focus,
+        .properties-filter .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.12);
+        }
+
+
+        /* =========================================
+           RESULTS HEADER
+        ========================================= */
+
+        .properties-results {
+            padding-top: 55px;
+            padding-bottom: 70px;
+        }
+
+        .results-count {
+            font-size: 15px;
+            color: #6b7280;
+        }
+
+
+        /* =========================================
+           PROPERTY CARD
+        ========================================= */
+
+        .nest-property-card {
+            border-radius: 16px;
+            overflow: hidden;
+            background: #ffffff;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .nest-property-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12) !important;
+        }
+
+
+        /* =========================================
+           PROPERTY IMAGE
+        ========================================= */
+
+        .nest-property-image {
+            height: 235px;
+            position: relative;
+            overflow: hidden;
+            background: #f1f3f5;
+        }
+
+        .nest-property-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .nest-property-card:hover
+        .nest-property-image img {
+            transform: scale(1.05);
+        }
+
+
+        /* Image overlay */
+
+        .image-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to top,
+                rgba(0,0,0,0.35),
+                transparent 50%
+            );
+            pointer-events: none;
+        }
+
+
+        /* =========================================
+           BADGES
+        ========================================= */
+
+        .property-purpose-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .badge-sale {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .badge-rent {
+            background: #198754;
+            color: white;
+        }
+
+        .property-type-badge {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            padding: 7px 12px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.95);
+            color: #374151;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+
+        /* =========================================
+           CARD BODY
+        ========================================= */
+
+        .nest-property-body {
+            padding: 22px;
+        }
+
+        .nest-property-title {
+            font-size: 19px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 9px;
+            line-height: 1.35;
+        }
+
+        .property-location {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 14px;
+        }
+
+        .property-price {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0d6efd;
+        }
+
+        .property-price small {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+
+        /* =========================================
+           PROPERTY FEATURES
+        ========================================= */
+
+        .property-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 17px;
+        }
+
+        .property-feature {
+            background: #f6f7f9;
+            border-radius: 7px;
+            padding: 7px 9px;
+            color: #4b5563;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .property-feature i {
+            color: #0d6efd;
+            margin-right: 4px;
+        }
+
+
+        /* =========================================
+           VIEW DETAILS
+        ========================================= */
+
+        .view-details-btn {
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 10px 15px;
+            margin-top: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .view-details-btn:hover {
+            transform: translateY(-1px);
+        }
+
+
+        /* =========================================
+           EMPTY STATE
+        ========================================= */
+
+        .empty-properties {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 70px 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+        }
+
+        .empty-properties-icon {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            background: #eef4ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: #0d6efd;
+            font-size: 30px;
+        }
+
+
+        /* =========================================
+           FOOTER
+        ========================================= */
+
+        .properties-footer {
+            background: #111827;
+            color: white;
+            padding: 40px 0;
+        }
+
+        .properties-footer p {
+            color: #9ca3af;
+        }
+
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 768px) {
+
+            .properties-hero {
+                padding: 45px 0 40px;
+            }
+
+            .properties-hero h1 {
+                font-size: 31px;
+            }
+
+            .properties-hero p {
+                font-size: 15px;
+            }
+
+            .properties-filter {
+                margin-top: -20px;
+                padding: 20px;
+            }
+
+            .nest-property-image {
+                height: 220px;
+            }
+
+            .properties-results {
+                padding-top: 40px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+{% include "_navbar.html" %}
+
+
+<!-- ==================================================
+     PAGE HERO
+================================================== -->
+
+<section class="properties-hero">
+
+    <div class="container">
+
+        <div class="row align-items-center">
+
+            <div class="col-lg-8">
+
+                <span class="badge bg-primary-subtle text-primary mb-3 px-3 py-2">
+                    <i class="fa-solid fa-house me-1"></i>
+                    NestFind Properties
+                </span>
+
+                <h1>
+                    Find Your Perfect Property
+                </h1>
+
+                <p class="text-muted mt-3 mb-0">
+                    Discover houses, apartments, villas and plots
+                    available for sale and rent.
+                    Find a place that truly feels like home.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ==================================================
+     SEARCH / FILTER
+================================================== -->
+
+<section>
+
+    <div class="container">
+
+        <form
+            action="{{ url_for('properties') }}"
+            method="GET"
+            class="properties-filter"
+        >
+
+            <div class="row g-3">
+
+
+                <!-- PURPOSE -->
+
+                <div class="col-lg-2 col-md-6">
+
+                    <label class="form-label">
+                        Purpose
+                    </label>
+
+                    <select
+                        name="purpose"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Buy / Rent
+                        </option>
+
+                        <option
+                            value="sale"
+                            {% if request.args.get('purpose') == 'sale' %}
+                                selected
+                            {% endif %}
+                        >
+                            Buy
+                        </option>
+
+                        <option
+                            value="rent"
+                            {% if request.args.get('purpose') == 'rent' %}
+                                selected
+                            {% endif %}
+                        >
+                            Rent
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- LOCATION -->
+
+                <div class="col-lg-2 col-md-6">
+
+                    <label class="form-label">
+                        Location
+                    </label>
+
+                    <input
+                        type="text"
+                        name="location"
+                        class="form-control"
+                        placeholder="City / Area"
+                        value="{{ request.args.get('location', '') }}"
+                    >
+
+                </div>
+
+
+
+                <!-- PROPERTY TYPE -->
+
+                <div class="col-lg-2 col-md-6">
+
+                    <label class="form-label">
+                        Property Type
+                    </label>
+
+                    <select
+                        name="property_type"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            All Types
+                        </option>
+
+                        {% for type in [
+                            'Apartment',
+                            'Independent House',
+                            'Villa',
+                            'Plot',
+                            'Commercial'
+                        ] %}
+
+                        <option
+                            value="{{ type }}"
+                            {% if request.args.get('property_type') == type %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ type }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- MIN PRICE -->
+
+                <div class="col-lg-2 col-md-6">
+
+                    <label class="form-label">
+                        Min Budget
+                    </label>
+
+                    <input
+                        type="number"
+                        name="min_price"
+                        class="form-control"
+                        placeholder="₹ Minimum"
+                        value="{{ request.args.get('min_price', '') }}"
+                    >
+
+                </div>
+
+
+
+                <!-- MAX PRICE -->
+
+                <div class="col-lg-2 col-md-6">
+
+                    <label class="form-label">
+                        Max Budget
+                    </label>
+
+                    <input
+                        type="number"
+                        name="max_price"
+                        class="form-control"
+                        placeholder="₹ Maximum"
+                        value="{{ request.args.get('max_price', '') }}"
+                    >
+
+                </div>
+
+
+
+                <!-- BEDROOMS -->
+
+                <div class="col-lg-2 col-md-6">
+
+                    <label class="form-label">
+                        Bedrooms
+                    </label>
+
+                    <select
+                        name="bedrooms"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Any
+                        </option>
+
+                        {% for bedroom in [1, 2, 3, 4] %}
+
+                        <option
+                            value="{{ bedroom }}"
+                            {% if request.args.get('bedrooms') == bedroom|string %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ bedroom }}+ BHK
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- BUTTONS -->
+
+            <div class="d-flex flex-wrap gap-2 mt-4">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary px-4"
+                >
+
+                    <i class="fa-solid fa-magnifying-glass me-2"></i>
+
+                    Search Properties
+
+                </button>
+
+
+                <a
+                    href="{{ url_for('properties') }}"
+                    class="btn btn-outline-secondary px-4"
+                >
+
+                    <i class="fa-solid fa-rotate-left me-2"></i>
+
+                    Clear Filters
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+
+<!-- ==================================================
+     PROPERTY RESULTS
+================================================== -->
+
+<section class="properties-results">
+
+    <div class="container">
+
+
+        <!-- RESULTS HEADER -->
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+
+            <div>
+
+                <h2 class="fw-bold mb-1">
+                    Available Properties
+                </h2>
+
+                <p class="results-count mb-0">
+
+                    <i class="fa-solid fa-building me-1"></i>
+
+                    {{ properties|length }}
+
+                    {% if properties|length == 1 %}
+                        property
+                    {% else %}
+                        properties
+                    {% endif %}
+
+                    found
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             PROPERTY CARDS
+        ================================================== -->
+
+        {% if properties %}
+
+        <div class="row g-4">
+
+            {% for property in properties %}
+
+            <div class="col-xl-4 col-lg-4 col-md-6">
+
+
+                <div class="nest-property-card shadow-sm">
+
+
+                    <!-- PROPERTY IMAGE -->
+
+                    <div class="nest-property-image">
+
+
+                        <!-- PURPOSE BADGE -->
+
+                        {% if property.purpose == "rent" %}
+
+                        <span class="property-purpose-badge badge-rent">
+
+                            <i class="fa-solid fa-key me-1"></i>
+
+                            For Rent
+
+                        </span>
+
+                        {% else %}
+
+                        <span class="property-purpose-badge badge-sale">
+
+                            <i class="fa-solid fa-tag me-1"></i>
+
+                            For Sale
+
+                        </span>
+
+                        {% endif %}
+
+
+
+                        <!-- PROPERTY TYPE -->
+
+                        {% if property.property_type %}
+
+                        <span class="property-type-badge">
+
+                            {{ property.property_type }}
+
+                        </span>
+
+                        {% endif %}
+
+
+
+                        <!-- IMAGE -->
+
+                        {% if property.images %}
+
+                            {% set main_image = property.images
+                                | selectattr("is_main", "equalto", true)
+                                | first
+                            %}
+
+
+                            {% if main_image %}
+
+                            <img
+                                src="{{ main_image.image_url }}"
+                                alt="{{ property.title }}"
+                                loading="lazy"
+                            >
+
+                            {% else %}
+
+                            <img
+                                src="{{ property.images[0].image_url }}"
+                                alt="{{ property.title }}"
+                                loading="lazy"
+                            >
+
+                            {% endif %}
+
+
+                            <div class="image-overlay"></div>
+
+
+                        {% else %}
+
+                            <div
+                                class="h-100 d-flex flex-column align-items-center justify-content-center text-muted"
+                            >
+
+                                <i
+                                    class="fa-solid fa-house fa-2x mb-2"
+                                ></i>
+
+                                <span>
+                                    {{ property.property_type or 'Property' }}
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+
+                    <!-- CARD BODY -->
+
+                    <div class="nest-property-body">
+
+
+                        <!-- TITLE -->
+
+                        <h3 class="nest-property-title">
+
+                            {{ property.title }}
+
+                        </h3>
+
+
+
+                        <!-- LOCATION -->
+
+                        <div class="property-location">
+
+                            <i class="fa-solid fa-location-dot me-1"></i>
+
+                            {{ property.location }}
+
+                        </div>
+
+
+
+                        <!-- PRICE -->
+
+                        <div class="property-price">
+
+                            ₹{{ "{:,.0f}".format(property.price|float) }}
+
+                            {% if property.purpose == "rent" %}
+
+                            <small>
+                                / month
+                            </small>
+
+                            {% endif %}
+
+                        </div>
+
+
+
+                        <!-- FEATURES -->
+
+                        <div class="property-features">
+
+
+                            {% if property.bedrooms %}
+
+                            <span class="property-feature">
+
+                                <i class="fa-solid fa-bed"></i>
+
+                                {{ property.bedrooms }} Beds
+
+                            </span>
+
+                            {% endif %}
+
+
+
+                            {% if property.bathrooms %}
+
+                            <span class="property-feature">
+
+                                <i class="fa-solid fa-bath"></i>
+
+                                {{ property.bathrooms }} Baths
+
+                            </span>
+
+                            {% endif %}
+
+
+
+                            {% if property.area %}
+
+                            <span class="property-feature">
+
+                                <i class="fa-solid fa-ruler-combined"></i>
+
+                                {{ property.area }} sq.ft
+
+                            </span>
+
+                            {% endif %}
+
+
+
+                            {% if property.furnishing %}
+
+                            <span class="property-feature">
+
+                                <i class="fa-solid fa-couch"></i>
+
+                                {{ property.furnishing }}
+
+                            </span>
+
+                            {% endif %}
+
+
+
+                            {% if property.parking %}
+
+                            <span class="property-feature">
+
+                                <i class="fa-solid fa-car"></i>
+
+                                Parking
+
+                            </span>
+
+                            {% endif %}
+
+
+                        </div>
+
+
+
+                        <!-- VIEW DETAILS -->
+
+                        <a
+                            href="{{ url_for('property_details', property_id=property.id) }}"
+                            class="btn btn-outline-primary w-100 view-details-btn"
+                        >
+
+                            View Details
+
+                            <i class="fa-solid fa-arrow-right ms-2"></i>
+
+                        </a>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- ==================================================
+             EMPTY RESULTS
+        ================================================== -->
+
+        {% else %}
+
+        <div class="empty-properties text-center">
+
+
+            <div class="empty-properties-icon">
+
+                <i class="fa-solid fa-house-circle-exclamation"></i>
+
+            </div>
+
+
+            <h3 class="fw-bold">
+                No Properties Found
+            </h3>
+
+
+            <p class="text-muted mb-4">
+
+                We couldn't find any properties matching
+                your current filters.
+
+                Try changing your search criteria.
+
+            </p>
+
+
+            <a
+                href="{{ url_for('properties') }}"
+                class="btn btn-primary px-4"
+            >
+
+                <i class="fa-solid fa-house me-2"></i>
+
+                View All Properties
+
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+
+
+<!-- ==================================================
+     FOOTER
+================================================== -->
+
+<footer class="properties-footer">
+
+    <div class="container text-center">
+
+        <h5 class="fw-bold mb-2">
+            <i class="fa-solid fa-house me-2"></i>
+            NestFind
+        </h5>
+
+        <p class="mb-0">
+            Find a place you'll love to call home.
+        </p>
+
+    </div>
+
+</footer>
+
+
+
+<!-- Bootstrap JS -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
+
+
+</body>
+</html>

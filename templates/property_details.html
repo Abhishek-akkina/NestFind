@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {{ property.title }} | NestFind
+    </title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+<body>
+
+{% include "_navbar.html" %}
+
+
+<!-- ================= BREADCRUMB ================= -->
+
+<section class="property-breadcrumb">
+
+    <div class="container">
+
+        <a href="{{ url_for('home') }}">
+            Home
+        </a>
+
+        <span> / </span>
+
+        <a href="{{ url_for('properties') }}">
+            Properties
+        </a>
+
+        <span> / </span>
+
+        <span>
+            {{ property.title }}
+        </span>
+
+    </div>
+
+</section>
+
+
+
+<!-- ================= PROPERTY DETAILS ================= -->
+
+<section class="py-5">
+
+    <div class="container">
+
+        <div class="row g-4">
+
+
+            <!-- ================= LEFT SIDE ================= -->
+
+            <div class="col-lg-7">
+
+
+                <!-- ================= PROPERTY IMAGE GALLERY ================= -->
+
+                <div class="property-gallery">
+
+                    {% if property.images %}
+
+                        {% set main_image = property.images
+                            | selectattr("is_main", "equalto", true)
+                            | first
+                        %}
+
+                        {% if main_image %}
+                            {% set selected_image = main_image %}
+                        {% else %}
+                            {% set selected_image = property.images[0] %}
+                        {% endif %}
+
+
+                        <!-- MAIN IMAGE -->
+
+                        <div class="property-main-image">
+
+                            <img
+                                id="mainPropertyImage"
+                                src="{{ selected_image.image_url }}"
+                                alt="{{ property.title }}"
+                            >
+
+                        </div>
+
+
+                        <!-- IMAGE THUMBNAILS -->
+
+                        {% if property.images|length > 1 %}
+
+                            <div class="property-thumbnails">
+
+                                {% for image in property.images %}
+
+                                    <button
+                                        type="button"
+                                        class="property-thumbnail
+                                        {% if image.id == selected_image.id %}active{% endif %}"
+                                        onclick="changePropertyImage(
+                                            '{{ image.image_url }}',
+                                            this
+                                        )"
+                                        aria-label="View property image {{ loop.index }}"
+                                    >
+
+                                        <img
+                                            src="{{ image.image_url }}"
+                                            alt="{{ property.title }} - Image {{ loop.index }}"
+                                        >
+
+                                    </button>
+
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+
+
+                    {% else %}
+
+                        <!-- NO IMAGE -->
+
+                        <div class="property-no-image">
+
+                            <div class="property-image-icon">
+                                🏠
+                            </div>
+
+                            <h5>
+                                {{ property.property_type }}
+                            </h5>
+
+                            <p class="text-muted mb-0">
+                                Property Image
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+
+                <!-- ================= PROPERTY DESCRIPTION ================= -->
+
+                <div class="property-section-card mt-4">
+
+                    <h3>
+                        About This Property
+                    </h3>
+
+                    <p class="text-muted">
+
+                        {% if property.description %}
+
+                            {{ property.description }}
+
+                        {% else %}
+
+                            No description available
+                            for this property.
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+
+
+                <!-- ================= PROPERTY FEATURES ================= -->
+
+                <div class="property-section-card mt-4">
+
+                    <h3>
+                        Property Features
+                    </h3>
+
+
+                    <div class="row g-3 mt-2">
+
+
+                        {% if property.bedrooms %}
+
+                            <div class="col-md-6">
+
+                                <div class="feature-box">
+
+                                    <span class="feature-icon">
+                                        🛏️
+                                    </span>
+
+                                    <div>
+
+                                        <small>
+                                            Bedrooms
+                                        </small>
+
+                                        <strong>
+                                            {{ property.bedrooms }}
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+
+
+                        {% if property.bathrooms %}
+
+                            <div class="col-md-6">
+
+                                <div class="feature-box">
+
+                                    <span class="feature-icon">
+                                        🛁
+                                    </span>
+
+                                    <div>
+
+                                        <small>
+                                            Bathrooms
+                                        </small>
+
+                                        <strong>
+                                            {{ property.bathrooms }}
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+
+
+                        {% if property.area %}
+
+                            <div class="col-md-6">
+
+                                <div class="feature-box">
+
+                                    <span class="feature-icon">
+                                        📐
+                                    </span>
+
+                                    <div>
+
+                                        <small>
+                                            Area
+                                        </small>
+
+                                        <strong>
+                                            {{ property.area }} sq.ft
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+
+
+                        <div class="col-md-6">
+
+                            <div class="feature-box">
+
+                                <span class="feature-icon">
+                                    🏠
+                                </span>
+
+                                <div>
+
+                                    <small>
+                                        Property Type
+                                    </small>
+
+                                    <strong>
+                                        {{ property.property_type }}
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        {% if property.furnishing %}
+
+                            <div class="col-md-6">
+
+                                <div class="feature-box">
+
+                                    <span class="feature-icon">
+                                        🛋️
+                                    </span>
+
+                                    <div>
+
+                                        <small>
+                                            Furnishing
+                                        </small>
+
+                                        <strong>
+                                            {{ property.furnishing }}
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+
+
+                        <div class="col-md-6">
+
+                            <div class="feature-box">
+
+                                <span class="feature-icon">
+                                    🚗
+                                </span>
+
+                                <div>
+
+                                    <small>
+                                        Parking
+                                    </small>
+
+                                    <strong>
+
+                                        {% if property.parking %}
+                                            Available
+                                        {% else %}
+                                            Not Available
+                                        {% endif %}
+
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ================= ADDRESS ================= -->
+
+                <div class="property-section-card mt-4">
+
+                    <h3>
+                        Location & Address
+                    </h3>
+
+                    <p class="text-muted">
+
+                        📍
+
+                        {{ property.address }}
+
+                        {% if property.pincode %}
+                            - {{ property.pincode }}
+                        {% endif %}
+
+                    </p>
+
+                    <p class="mb-0">
+
+                        <strong>
+                            Location:
+                        </strong>
+
+                        {{ property.location }}
+
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ================= RIGHT SIDE ================= -->
+
+            <div class="col-lg-5">
+
+
+                <div class="property-info-card">
+
+
+                    <!-- ================= PURPOSE ================= -->
+
+                    {% if property.purpose == "rent" %}
+
+                        <span class="badge bg-success property-purpose">
+                            FOR RENT
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge bg-primary property-purpose">
+                            FOR SALE
+                        </span>
+
+                    {% endif %}
+
+
+
+                    <!-- ================= TITLE ================= -->
+
+                    <h1 class="property-details-title">
+
+                        {{ property.title }}
+
+                    </h1>
+
+
+
+                    <!-- ================= LOCATION ================= -->
+
+                    <p class="property-location">
+
+                        📍 {{ property.location }}
+
+                    </p>
+
+
+
+                    <!-- ================= PRICE ================= -->
+
+                    <div class="property-details-price">
+
+                        ₹{{ "{:,.0f}".format(
+                            property.price|float
+                        ) }}
+
+                        {% if property.purpose == "rent" %}
+
+                            <span>
+                                / month
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <hr>
+
+
+
+                    <!-- ================= QUICK INFO ================= -->
+
+                    <div class="quick-info">
+
+                        {% if property.bedrooms %}
+
+                            <div>
+
+                                <strong>
+                                    {{ property.bedrooms }}
+                                </strong>
+
+                                <span>
+                                    Bedrooms
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if property.bathrooms %}
+
+                            <div>
+
+                                <strong>
+                                    {{ property.bathrooms }}
+                                </strong>
+
+                                <span>
+                                    Bathrooms
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if property.area %}
+
+                            <div>
+
+                                <strong>
+                                    {{ property.area }}
+                                </strong>
+
+                                <span>
+                                    Sq.Ft
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <hr>
+
+
+
+                    <!-- ================= PROPERTY ENQUIRY ================= -->
+
+                    {% if session.get("user_id") %}
+
+                        <h4 class="fw-bold mb-2">
+                            Interested in this property?
+                        </h4>
+
+                        <p class="text-muted mb-4">
+                            Send an enquiry and our team will
+                            contact you soon.
+                        </p>
+
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'property_enquiry',
+                                property_id=property.id
+                            ) }}"
+                        >
+
+                            <!-- ================= CSRF TOKEN ================= -->
+
+                            <input
+                                type="hidden"
+                                name="csrf_token"
+                                value="{{ csrf_token() }}"
+                            >
+
+
+                            <!-- NAME -->
+
+                            <div class="mb-3">
+
+                                <label
+                                    for="name"
+                                    class="form-label fw-semibold"
+                                >
+                                    Full Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="name"
+                                    name="name"
+                                    value="{{ session.get('user_name', '') }}"
+                                    placeholder="Enter your full name"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- EMAIL -->
+
+                            <div class="mb-3">
+
+                                <label
+                                    for="email"
+                                    class="form-label fw-semibold"
+                                >
+                                    Email Address
+                                </label>
+
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    id="email"
+                                    name="email"
+                                    value="{{ session.get('user_email', '') }}"
+                                    placeholder="Enter your email"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- PHONE -->
+
+                            <div class="mb-3">
+
+                                <label
+                                    for="phone"
+                                    class="form-label fw-semibold"
+                                >
+                                    Phone Number
+                                </label>
+
+                                <input
+                                    type="tel"
+                                    class="form-control"
+                                    id="phone"
+                                    name="phone"
+                                    placeholder="Enter your phone number"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- MESSAGE -->
+
+                            <div class="mb-3">
+
+                                <label
+                                    for="message"
+                                    class="form-label fw-semibold"
+                                >
+                                    Message
+                                </label>
+
+                                <textarea
+                                    class="form-control"
+                                    id="message"
+                                    name="message"
+                                    rows="4"
+                                    placeholder="I am interested in this property. Please contact me."
+                                    required
+                                ></textarea>
+
+                            </div>
+
+
+                            <!-- SUBMIT -->
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary btn-lg w-100"
+                            >
+                                Send Enquiry
+                            </button>
+
+                        </form>
+
+
+                    {% else %}
+
+
+                        <!-- ================= LOGIN REQUIRED ================= -->
+
+                        <div class="text-center py-3">
+
+                            <div
+                                class="mb-3"
+                                style="font-size: 45px;"
+                            >
+                                🔐
+                            </div>
+
+                            <h5 class="fw-bold">
+                                Login Required
+                            </h5>
+
+                            <p class="text-muted">
+                                Please login to your NestFind account
+                                before submitting an enquiry.
+                            </p>
+
+                            <a
+                                href="{{ url_for('login') }}"
+                                class="btn btn-primary btn-lg w-100"
+                            >
+                                Login to Continue
+                            </a>
+
+                        </div>
+
+                    {% endif %}
+
+
+
+                    <!-- ================= BACK BUTTON ================= -->
+
+                    <a
+                        href="{{ url_for('properties') }}"
+                        class="btn btn-outline-secondary btn-lg w-100 mt-3"
+                    >
+                        ← Back to Properties
+                    </a>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer class="bg-dark text-white py-4">
+
+    <div class="container text-center">
+
+        <h5 class="fw-bold">
+            NestFind
+        </h5>
+
+        <p class="text-secondary mb-0">
+            Find a place you'll love to call home.
+        </p>
+
+    </div>
+
+</footer>
+
+
+
+<!-- ================= IMAGE GALLERY JS ================= -->
+
+<script>
+
+function changePropertyImage(imageUrl, thumbnail) {
+
+    const mainImage = document.getElementById(
+        "mainPropertyImage"
+    );
+
+    if (!mainImage) {
+        return;
+    }
+
+
+    // Change main image
+
+    mainImage.style.opacity = "0.5";
+
+    setTimeout(function () {
+
+        mainImage.src = imageUrl;
+
+        mainImage.onload = function () {
+
+            mainImage.style.opacity = "1";
+
+        };
+
+    }, 120);
+
+
+    // Remove active state
+
+    document
+        .querySelectorAll(".property-thumbnail")
+        .forEach(function (item) {
+
+            item.classList.remove("active");
+
+        });
+
+
+    // Add active state
+
+    thumbnail.classList.add("active");
+
+}
+
+</script>
+
+
+
+<!-- Bootstrap JS -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NestFind | Find Your Perfect Home</title>
+
+    <!-- Google Font -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    >
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Main CSS -->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+                         NAVBAR
+    ====================================================== -->
+
+    {% include "_navbar.html" %}
+
+
+
+    <!-- =====================================================
+                         HERO SECTION
+    ====================================================== -->
+
+    <section class="hero-section">
+
+        <div class="container">
+
+            <div class="row align-items-center">
+
+                <div class="col-lg-10 mx-auto text-center">
+
+                    <h1>
+                        Find a Place You'll Love to Call Home
+                    </h1>
+
+                    <p>
+                        Discover the perfect property for rent or sale.
+                        Search thousands of properties and find your
+                        dream home with NestFind.
+                    </p>
+
+
+                    <!-- =================================================
+                             SEARCH FORM
+                    ================================================== -->
+
+                    <form
+                        action="{{ url_for('properties') }}"
+                        method="GET"
+                        class="search-box"
+                    >
+
+
+                        <!-- PURPOSE -->
+
+                        <select
+                            name="purpose"
+                            class="form-select"
+                            aria-label="Looking for"
+                        >
+
+                            <option value="">
+                                Buy or Rent
+                            </option>
+
+                            <option value="sale">
+                                Buy / Sale
+                            </option>
+
+                            <option value="rent">
+                                Rent
+                            </option>
+
+                        </select>
+
+
+
+                        <!-- PROPERTY TYPE -->
+
+                        <select
+                            name="property_type"
+                            class="form-select"
+                            aria-label="Property type"
+                        >
+
+                            <option value="">
+                                Property Type
+                            </option>
+
+                            <option value="house">
+                                House
+                            </option>
+
+                            <option value="apartment">
+                                Apartment
+                            </option>
+
+                            <option value="villa">
+                                Villa
+                            </option>
+
+                            <option value="plot">
+                                Plot
+                            </option>
+
+                            <option value="office">
+                                Office
+                            </option>
+
+                            <option value="shop">
+                                Shop
+                            </option>
+
+                        </select>
+
+
+
+                        <!-- LOCATION -->
+
+                        <input
+                            type="text"
+                            name="location"
+                            class="form-control"
+                            placeholder="Enter Location"
+                            aria-label="Location"
+                        >
+
+
+
+                        <!-- SEARCH BUTTON -->
+
+                        <button
+                            type="submit"
+                            class="btn btn-dark"
+                        >
+
+                            <i class="fas fa-search me-2"></i>
+
+                            Search
+
+                        </button>
+
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+                    LATEST PROPERTIES
+    ====================================================== -->
+
+    <section class="py-5">
+
+        <div class="container">
+
+
+            <!-- SECTION HEADING -->
+
+            <div class="text-center mb-5">
+
+                <span class="section-subtitle">
+                    EXPLORE
+                </span>
+
+                <h2 class="section-title mt-2">
+                    Latest Properties
+                </h2>
+
+                <p class="section-description mx-auto"
+                   style="max-width: 650px;">
+
+                    Explore our latest properties available
+                    for rent and sale.
+
+                </p>
+
+            </div>
+
+
+
+            <!-- =================================================
+                        PROPERTY LIST
+            ================================================== -->
+
+            {% if properties %}
+
+            <div class="row g-4">
+
+
+                {% for property in properties %}
+
+
+                <div class="col-lg-4 col-md-6">
+
+
+                    <!-- PROPERTY CARD -->
+
+                    <div class="card property-card h-100 border-0 shadow-sm">
+
+
+                        <!-- =================================================
+                                PROPERTY IMAGE
+                        ================================================== -->
+
+                        {% if property.images %}
+
+                            {% set main_image = property.images
+                                | selectattr('is_main', 'equalto', true)
+                                | list
+                                | first
+                            %}
+
+
+                            {% if main_image %}
+
+                                <img
+                                    src="{{ main_image.image_url }}"
+                                    alt="{{ property.title }}"
+                                    class="card-img-top"
+                                    style="height: 220px; object-fit: cover;"
+                                >
+
+                            {% else %}
+
+                                <img
+                                    src="{{ property.images[0].image_url }}"
+                                    alt="{{ property.title }}"
+                                    class="card-img-top"
+                                    style="height: 220px; object-fit: cover;"
+                                >
+
+                            {% endif %}
+
+
+                        {% else %}
+
+                            <div class="property-image-placeholder">
+
+                                <i class="fas fa-house fa-2x"></i>
+
+                            </div>
+
+                        {% endif %}
+
+
+
+                        <!-- =================================================
+                                PROPERTY BODY
+                        ================================================== -->
+
+                        <div class="card-body">
+
+
+                            <!-- PURPOSE BADGE -->
+
+                            {% if property.purpose == "sale" %}
+
+                                <span class="badge bg-primary mb-2">
+                                    For Sale
+                                </span>
+
+                            {% elif property.purpose == "rent" %}
+
+                                <span class="badge bg-success mb-2">
+                                    For Rent
+                                </span>
+
+                            {% endif %}
+
+
+
+                            <!-- PROPERTY TYPE -->
+
+                            <div class="property-meta text-muted mb-1">
+
+                                <i class="fas fa-building me-1"></i>
+
+                                {{ property.property_type }}
+
+                            </div>
+
+
+
+                            <!-- TITLE -->
+
+                            <h5 class="card-title fw-bold">
+
+                                {{ property.title }}
+
+                            </h5>
+
+
+
+                            <!-- LOCATION -->
+
+                            <p class="property-meta text-muted mb-2">
+
+                                <i class="fas fa-location-dot me-1"></i>
+
+                                {{ property.location }}
+
+                                {% if property.pincode %}
+                                    - {{ property.pincode }}
+                                {% endif %}
+
+                            </p>
+
+
+
+                            <!-- PRICE -->
+
+                            <h4 class="text-primary fw-bold mb-3">
+
+                                ₹{{ "{:,.0f}".format(property.price) }}
+
+                                {% if property.purpose == "rent" %}
+
+                                    <small class="text-muted fs-6 fw-normal">
+                                        / month
+                                    </small>
+
+                                {% endif %}
+
+                            </h4>
+
+
+
+                            <!-- PROPERTY FEATURES -->
+
+                            <div class="d-flex flex-wrap gap-3 mb-4">
+
+
+                                {% if property.bedrooms %}
+
+                                <span class="property-meta">
+
+                                    <i class="fas fa-bed me-1"></i>
+
+                                    {{ property.bedrooms }} Beds
+
+                                </span>
+
+                                {% endif %}
+
+
+
+                                {% if property.bathrooms %}
+
+                                <span class="property-meta">
+
+                                    <i class="fas fa-bath me-1"></i>
+
+                                    {{ property.bathrooms }} Baths
+
+                                </span>
+
+                                {% endif %}
+
+
+
+                                {% if property.area %}
+
+                                <span class="property-meta">
+
+                                    <i class="fas fa-ruler-combined me-1"></i>
+
+                                    {{ property.area }} sq.ft
+
+                                </span>
+
+                                {% endif %}
+
+
+                            </div>
+
+
+
+                            <!-- VIEW DETAILS -->
+
+                            <a
+                                href="{{ url_for('property_details', property_id=property.id) }}"
+                                class="btn btn-outline-primary w-100"
+                            >
+
+                                View Details
+
+                                <i class="fas fa-arrow-right ms-1"></i>
+
+                            </a>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+            {% else %}
+
+
+            <!-- =================================================
+                         NO PROPERTIES
+            ================================================== -->
+
+            <div class="text-center py-5">
+
+                <div class="property-image-placeholder mx-auto"
+                     style="max-width: 400px; height: 200px;">
+
+                    <i class="fas fa-house fa-2x me-2"></i>
+
+                    No Properties Available
+
+                </div>
+
+                <p class="text-muted mt-3">
+
+                    New properties will appear here
+                    when they are added.
+
+                </p>
+
+            </div>
+
+
+            {% endif %}
+
+
+
+            <!-- VIEW ALL -->
+
+            <div class="text-center mt-5">
+
+                <a
+                    href="{{ url_for('properties') }}"
+                    class="btn btn-dark px-4"
+                >
+
+                    View All Properties
+
+                    <i class="fas fa-arrow-right ms-2"></i>
+
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+                         ABOUT SECTION
+    ====================================================== -->
+
+    <section
+        id="about"
+        class="nestfind-about-section py-5"
+    >
+
+        <div class="container">
+
+
+            <div class="row align-items-center g-5">
+
+
+                <!-- LEFT CONTENT -->
+
+                <div class="col-lg-6">
+
+
+                    <span class="section-subtitle">
+                        ABOUT NESTFIND
+                    </span>
+
+
+                    <h2 class="section-title mt-2">
+
+                        Find a Place You'll Love
+                        to Call Home
+
+                    </h2>
+
+
+                    <p class="section-description mt-3">
+
+                        NestFind is a modern real-estate platform
+                        designed to make finding your perfect property
+                        simple, convenient and stress-free.
+
+                    </p>
+
+
+                    <p class="section-description">
+
+                        Whether you are looking for a home to buy,
+                        a property to rent, an apartment, villa,
+                        plot or commercial space, NestFind helps
+                        you discover the right property.
+
+                    </p>
+
+
+
+                    <!-- ABOUT FEATURES -->
+
+                    <div class="mt-4">
+
+
+                        <div class="about-feature mb-4">
+
+
+                            <div class="about-feature-icon">
+
+                                <i class="fas fa-house"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <h6>
+                                    Wide Range of Properties
+                                </h6>
+
+                                <p>
+                                    Explore houses, apartments,
+                                    villas, plots and commercial
+                                    properties.
+                                </p>
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="about-feature mb-4">
+
+
+                            <div class="about-feature-icon">
+
+                                <i class="fas fa-magnifying-glass"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <h6>
+                                    Easy Property Search
+                                </h6>
+
+                                <p>
+                                    Find properties based on
+                                    location, type and purpose.
+                                </p>
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="about-feature">
+
+
+                            <div class="about-feature-icon">
+
+                                <i class="fas fa-shield-halved"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <h6>
+                                    Simple & Reliable
+                                </h6>
+
+                                <p>
+                                    Get clear property information
+                                    through a clean and easy interface.
+                                </p>
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- RIGHT VISUAL -->
+
+                <div class="col-lg-6">
+
+
+                    <div class="about-visual">
+
+
+                        <div class="about-visual-content">
+
+
+                            <i class="fas fa-house-chimney"></i>
+
+
+                            <h3>
+                                Your Dream Home
+                                Starts Here
+                            </h3>
+
+
+                            <p>
+                                Discover the right place,
+                                at the right price,
+                                with NestFind.
+                            </p>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+                    WHY CHOOSE NESTFIND
+    ====================================================== -->
+
+    <section class="why-nestfind-section py-5">
+
+        <div class="container">
+
+
+            <!-- HEADING -->
+
+            <div class="text-center mb-5">
+
+
+                <span class="section-subtitle">
+                    WHY NESTFIND
+                </span>
+
+
+                <h2 class="section-title mt-2">
+                    Why Choose NestFind?
+                </h2>
+
+
+                <p
+                    class="section-description mx-auto"
+                    style="max-width: 650px;"
+                >
+
+                    Everything you need to make
+                    your property search easier.
+
+                </p>
+
+
+            </div>
+
+
+
+            <!-- FEATURES -->
+
+            <div class="row g-4">
+
+
+                <!-- CARD 1 -->
+
+                <div class="col-lg-3 col-md-6">
+
+
+                    <div class="why-card">
+
+
+                        <div class="why-icon">
+
+                            <i class="fas fa-clock"></i>
+
+                        </div>
+
+
+                        <h5>
+                            Save Time
+                        </h5>
+
+
+                        <p>
+                            Search multiple property options
+                            without wasting your valuable time.
+                        </p>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- CARD 2 -->
+
+                <div class="col-lg-3 col-md-6">
+
+
+                    <div class="why-card">
+
+
+                        <div class="why-icon">
+
+                            <i class="fas fa-filter"></i>
+
+                        </div>
+
+
+                        <h5>
+                            Smart Search
+                        </h5>
+
+
+                        <p>
+                            Filter properties according to
+                            your requirements.
+                        </p>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- CARD 3 -->
+
+                <div class="col-lg-3 col-md-6">
+
+
+                    <div class="why-card">
+
+
+                        <div class="why-icon">
+
+                            <i class="fas fa-location-dot"></i>
+
+                        </div>
+
+
+                        <h5>
+                            Find Locations
+                        </h5>
+
+
+                        <p>
+                            Search properties based on
+                            your preferred location.
+                        </p>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- CARD 4 -->
+
+                <div class="col-lg-3 col-md-6">
+
+
+                    <div class="why-card">
+
+
+                        <div class="why-icon">
+
+                            <i class="fas fa-mobile-screen-button"></i>
+
+                        </div>
+
+
+                        <h5>
+                            Easy to Use
+                        </h5>
+
+
+                        <p>
+                            Enjoy a simple and responsive
+                            experience on every device.
+                        </p>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+                       CONTACT SECTION
+    ====================================================== -->
+
+    <section
+        id="contact"
+        class="nestfind-contact-section py-5"
+    >
+
+        <div class="container">
+
+
+            <!-- HEADING -->
+
+            <div class="text-center mb-5">
+
+
+                <span class="section-subtitle">
+                    CONTACT US
+                </span>
+
+
+                <h2 class="section-title mt-2">
+                    Get in Touch
+                </h2>
+
+
+                <p
+                    class="section-description mx-auto"
+                    style="max-width: 650px;"
+                >
+
+                    Have questions about a property?
+                    We are here to help.
+
+                </p>
+
+
+            </div>
+
+
+
+            <div class="row g-4">
+
+
+                <!-- =================================================
+                           CONTACT INFORMATION
+                ================================================== -->
+
+                <div class="col-lg-6">
+
+
+                    <div class="contact-info-list">
+
+
+                        <!-- LOCATION -->
+
+                        <div class="contact-item">
+
+
+                            <div class="contact-icon">
+
+                                <i class="fas fa-location-dot"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <h6>
+                                    Location
+                                </h6>
+
+                                <p>
+                                    Andhra Pradesh, India
+                                </p>
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <!-- PHONE -->
+
+                        <div class="contact-item">
+
+
+                            <div class="contact-icon">
+
+                                <i class="fas fa-phone"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <h6>
+                                    Phone
+                                </h6>
+
+                                <p>
+                                    +91 8885464723
+                                </p>
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <!-- EMAIL -->
+
+                        <div class="contact-item">
+
+
+                            <div class="contact-icon">
+
+                                <i class="fas fa-envelope"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <h6>
+                                    Email
+                                </h6>
+
+                                <p>
+                                    akkina.abhishek1289@gmail.com
+                                </p>
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                            CONTACT OPTIONS
+                ================================================== -->
+
+                <div class="col-lg-6">
+
+
+                    <div class="contact-card">
+
+
+                        <div class="text-center mb-4">
+
+
+                            <div class="contact-card-icon">
+
+                                <i class="fas fa-house"></i>
+
+                            </div>
+
+
+                            <h4>
+                                Looking for a Property?
+                            </h4>
+
+
+                            <p class="text-muted">
+
+                                Start exploring properties
+                                available on NestFind.
+
+                            </p>
+
+
+                        </div>
+
+
+
+                        <div class="row g-3">
+
+
+                            <!-- BUY -->
+
+                            <div class="col-md-6">
+
+
+                                <div class="contact-option">
+
+
+                                    <i class="fas fa-house"></i>
+
+
+                                    <h6>
+                                        Buy Property
+                                    </h6>
+
+
+                                    <p>
+                                        Explore properties
+                                        available for sale.
+                                    </p>
+
+
+                                    <a
+                                        href="{{ url_for('properties', purpose='sale') }}"
+                                        class="btn btn-dark btn-sm"
+                                    >
+
+                                        Browse Buy
+
+                                        <i class="fas fa-arrow-right ms-1"></i>
+
+                                    </a>
+
+
+                                </div>
+
+
+                            </div>
+
+
+
+                            <!-- RENT -->
+
+                            <div class="col-md-6">
+
+
+                                <div class="contact-option">
+
+
+                                    <i class="fas fa-key"></i>
+
+
+                                    <h6>
+                                        Rent Property
+                                    </h6>
+
+
+                                    <p>
+                                        Find properties
+                                        available for rent.
+                                    </p>
+
+
+                                    <a
+                                        href="{{ url_for('properties', purpose='rent') }}"
+                                        class="btn btn-dark btn-sm"
+                                    >
+
+                                        Browse Rent
+
+                                        <i class="fas fa-arrow-right ms-1"></i>
+
+                                    </a>
+
+
+                                </div>
+
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+                           FOOTER
+    ====================================================== -->
+
+    <footer class="nestfind-footer">
+
+
+        <div class="container">
+
+
+            <div class="row g-5">
+
+
+                <!-- =================================================
+                              BRAND
+                ================================================== -->
+
+                <div class="col-lg-5">
+
+
+                    <div class="footer-brand">
+
+                        Nest<span>Find</span>
+
+                    </div>
+
+
+                    <p class="footer-description">
+
+                        Find your perfect home with NestFind.
+                        Search properties for rent and sale
+                        easily and conveniently.
+
+                    </p>
+
+
+
+                    <!-- SOCIAL LINKS -->
+
+                    <div class="footer-social">
+
+
+                        <a href="#"
+                           aria-label="Facebook">
+
+                            <i class="fab fa-facebook-f"></i>
+
+                        </a>
+
+
+                        <a href="#"
+                           aria-label="Instagram">
+
+                            <i class="fab fa-instagram"></i>
+
+                        </a>
+
+
+                        <a href="#"
+                           aria-label="LinkedIn">
+
+                            <i class="fab fa-linkedin-in"></i>
+
+                        </a>
+
+
+                        <a href="#"
+                           aria-label="Twitter">
+
+                            <i class="fab fa-x-twitter"></i>
+
+                        </a>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                            QUICK LINKS
+                ================================================== -->
+
+                <div class="col-lg-3 col-md-6">
+
+
+                    <h5 class="footer-heading">
+                        Quick Links
+                    </h5>
+
+
+                    <ul class="footer-links">
+
+
+                        <li>
+
+                            <a href="{{ url_for('home') }}">
+
+                                Home
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a
+                                href="{{ url_for('properties', purpose='sale') }}"
+                            >
+
+                                Buy
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a
+                                href="{{ url_for('properties', purpose='rent') }}"
+                            >
+
+                                Rent
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{{ url_for('home') }}#about">
+
+                                About
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+
+                            <a href="{{ url_for('home') }}#contact">
+
+                                Contact
+
+                            </a>
+
+                        </li>
+
+
+                    </ul>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                              CONTACT
+                ================================================== -->
+
+                <div class="col-lg-4 col-md-6">
+
+
+                    <h5 class="footer-heading">
+                        Contact
+                    </h5>
+
+
+                    <div class="footer-contact">
+
+
+                        <p>
+
+                            <i class="fas fa-location-dot"></i>
+
+                            <span>
+                                Andhra Pradesh, India
+                            </span>
+
+                        </p>
+
+
+                        <p>
+
+                            <i class="fas fa-phone"></i>
+
+                            <span>
+                                +91 8885464723
+                            </span>
+
+                        </p>
+
+
+                        <p>
+
+                            <i class="fas fa-envelope"></i>
+
+                            <span>
+                                akkina.abhishek1289@gmail.com
+                            </span>
+
+                        </p>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                         FOOTER BOTTOM
+            ================================================== -->
+
+            <div class="footer-bottom">
+
+
+                <p>
+                    © 2026 NestFind.
+                    All Rights Reserved.
+                </p>
+
+
+                <p>
+                    Find Your Perfect Place
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+    </footer>
+
+
+
+    <!-- =====================================================
+                         BOOTSTRAP JS
+    ====================================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+
+    <!-- =====================================================
+                         MAIN JS
+    ====================================================== -->
+
+    <script
+        src="{{ url_for('static', filename='js/script.js') }}">
+    </script>
+
+
+</body>
+
+</html>

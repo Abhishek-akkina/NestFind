@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Add Property | NestFind Admin</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+</head>
+
+
+<body class="bg-light">
+
+
+<!-- ================= NAVBAR ================= -->
+
+<nav class="navbar navbar-dark bg-dark">
+
+    <div class="container">
+
+        <a
+            href="{{ url_for('admin_dashboard') }}"
+            class="navbar-brand fw-bold"
+        >
+            NestFind Admin
+        </a>
+
+        <div>
+
+            <a
+                href="{{ url_for('admin_properties') }}"
+                class="btn btn-outline-light btn-sm me-2"
+            >
+                Manage Properties
+            </a>
+
+            <a
+                href="{{ url_for('admin_logout') }}"
+                class="btn btn-danger btn-sm"
+            >
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- ================= MAIN ================= -->
+
+<div class="container py-5">
+
+    <div class="mb-4">
+
+        <h1 class="fw-bold">
+            Add New Property
+        </h1>
+
+        <p class="text-muted">
+            Add a property to your NestFind website.
+        </p>
+
+    </div>
+
+
+    <!-- ================= FLASH MESSAGES ================= -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div
+                    class="alert alert-{{ category if category in ['success', 'danger', 'warning', 'info'] else 'info' }}"
+                >
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+
+
+    <!-- ================= PROPERTY FORM ================= -->
+
+    <form
+        method="POST"
+        action="{{ url_for('admin_add_property') }}"
+        enctype="multipart/form-data"
+        id="propertyForm"
+    >
+
+        <!-- ================= CSRF TOKEN ================= -->
+
+        <input
+            type="hidden"
+            name="csrf_token"
+            value="{{ csrf_token() }}"
+        >
+
+
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-body p-4">
+
+
+                <!-- ================= BASIC INFORMATION ================= -->
+
+                <h4 class="fw-bold mb-4">
+                    Basic Information
+                </h4>
+
+
+                <!-- TITLE -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Property Title *
+                    </label>
+
+                    <input
+                        type="text"
+                        name="title"
+                        class="form-control"
+                        placeholder="Example: 2 BHK Apartment in Kakinada"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="row">
+
+
+                    <!-- PURPOSE -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Purpose *
+                        </label>
+
+                        <select
+                            name="purpose"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">
+                                Select Purpose
+                            </option>
+
+                            <option value="sale">
+                                Sale / Buy
+                            </option>
+
+                            <option value="rent">
+                                Rent
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- PROPERTY TYPE -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Property Type *
+                        </label>
+
+                        <select
+                            name="property_type"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">
+                                Select Property Type
+                            </option>
+
+                            <option value="Apartment">
+                                Apartment
+                            </option>
+
+                            <option value="Independent House">
+                                Independent House
+                            </option>
+
+                            <option value="Villa">
+                                Villa
+                            </option>
+
+                            <option value="Plot">
+                                Plot
+                            </option>
+
+                            <option value="Commercial">
+                                Commercial
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PRICE -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Price *
+                    </label>
+
+                    <input
+                        type="number"
+                        name="price"
+                        class="form-control"
+                        placeholder="Example: 15000"
+                        min="0"
+                        step="0.01"
+                        required
+                    >
+
+                    <small class="text-muted">
+                        For rent enter monthly rent.
+                    </small>
+
+                </div>
+
+
+
+                <!-- ================= LOCATION ================= -->
+
+                <h4 class="fw-bold mt-5 mb-4">
+                    Location Details
+                </h4>
+
+
+                <div class="row">
+
+
+                    <!-- LOCATION -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            City / Location *
+                        </label>
+
+                        <input
+                            type="text"
+                            name="location"
+                            class="form-control"
+                            placeholder="Example: Kakinada"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- PINCODE -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Pincode
+                        </label>
+
+                        <input
+                            type="text"
+                            name="pincode"
+                            class="form-control"
+                            placeholder="Example: 533001"
+                            maxlength="10"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- ADDRESS -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Full Address *
+                    </label>
+
+                    <textarea
+                        name="address"
+                        class="form-control"
+                        rows="3"
+                        placeholder="Enter complete property address"
+                        required
+                    ></textarea>
+
+                </div>
+
+
+
+                <!-- ================= PROPERTY DETAILS ================= -->
+
+                <h4 class="fw-bold mt-5 mb-4">
+                    Property Details
+                </h4>
+
+
+                <div class="row">
+
+
+                    <!-- BEDROOMS -->
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+                            Bedrooms
+                        </label>
+
+                        <input
+                            type="number"
+                            name="bedrooms"
+                            class="form-control"
+                            min="0"
+                            placeholder="2"
+                        >
+
+                    </div>
+
+
+                    <!-- BATHROOMS -->
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+                            Bathrooms
+                        </label>
+
+                        <input
+                            type="number"
+                            name="bathrooms"
+                            class="form-control"
+                            min="0"
+                            placeholder="2"
+                        >
+
+                    </div>
+
+
+                    <!-- AREA -->
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+                            Area (sq.ft)
+                        </label>
+
+                        <input
+                            type="number"
+                            name="area"
+                            class="form-control"
+                            min="0"
+                            placeholder="1200"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="row">
+
+
+                    <!-- FURNISHING -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Furnishing
+                        </label>
+
+                        <select
+                            name="furnishing"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                Select Furnishing
+                            </option>
+
+                            <option value="Unfurnished">
+                                Unfurnished
+                            </option>
+
+                            <option value="Semi-Furnished">
+                                Semi-Furnished
+                            </option>
+
+                            <option value="Fully Furnished">
+                                Fully Furnished
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- PARKING -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Parking
+                        </label>
+
+                        <div class="form-check mt-2">
+
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                name="parking"
+                                id="parking"
+                            >
+
+                            <label
+                                class="form-check-label"
+                                for="parking"
+                            >
+                                Parking Available
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ================= STATUS ================= -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Property Status
+                    </label>
+
+                    <select
+                        name="status"
+                        class="form-select"
+                    >
+
+                        <option value="available">
+                            Available
+                        </option>
+
+                        <option value="sold">
+                            Sold
+                        </option>
+
+                        <option value="rented">
+                            Rented
+                        </option>
+
+                        <option value="inactive">
+                            Inactive
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- ================= PROPERTY IMAGES ================= -->
+
+                <h4 class="fw-bold mt-5 mb-4">
+                    Property Images
+                </h4>
+
+
+                <div class="mb-4">
+
+                    <label
+                        for="propertyImages"
+                        class="form-label fw-semibold"
+                    >
+                        Upload Property Images
+                    </label>
+
+
+                    <input
+                        type="file"
+                        name="images"
+                        id="propertyImages"
+                        class="form-control"
+                        accept="image/png,image/jpeg,image/jpg,image/webp"
+                        multiple
+                        required
+                    >
+
+
+                    <div class="form-text">
+
+                        Upload up to 5 images.
+                        JPG, JPEG, PNG, or WEBP only.
+                        Maximum 5 MB per image.
+
+                    </div>
+
+
+                    <small class="text-muted d-block mt-2">
+
+                        You can select multiple images.
+
+                        <br>
+
+                        Supported formats:
+                        JPG, JPEG, PNG, WEBP
+
+                        <br>
+
+                        Maximum file size:
+                        5 MB per image
+
+                    </small>
+
+
+                    <!-- SELECTED IMAGE COUNT -->
+
+                    <div
+                        id="imageCount"
+                        class="mt-3 fw-semibold text-primary"
+                        style="display: none;"
+                    ></div>
+
+
+                    <!-- IMAGE PREVIEW -->
+
+                    <div
+                        id="imagePreviewContainer"
+                        class="row g-3 mt-2"
+                    ></div>
+
+                </div>
+
+
+
+                <!-- ================= DESCRIPTION ================= -->
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Description
+                    </label>
+
+                    <textarea
+                        name="description"
+                        class="form-control"
+                        rows="5"
+                        placeholder="Describe the property..."
+                    ></textarea>
+
+                </div>
+
+
+
+                <!-- ================= BUTTONS ================= -->
+
+                <div class="d-flex gap-2">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary px-4"
+                        id="submitButton"
+                    >
+                        Add Property
+                    </button>
+
+                    <a
+                        href="{{ url_for('admin_dashboard') }}"
+                        class="btn btn-secondary px-4"
+                    >
+                        Cancel
+                    </a>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+
+<!-- ================= IMAGE PREVIEW JAVASCRIPT ================= -->
+
+<script>
+
+const imageInput =
+    document.getElementById("propertyImages");
+
+const previewContainer =
+    document.getElementById("imagePreviewContainer");
+
+const imageCount =
+    document.getElementById("imageCount");
+
+const propertyForm =
+    document.getElementById("propertyForm");
+
+const submitButton =
+    document.getElementById("submitButton");
+
+
+const allowedTypes = [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp"
+];
+
+
+const maxFileSize =
+    5 * 1024 * 1024;
+
+const maxImages = 5;
+
+
+
+imageInput.addEventListener("change", function () {
+
+    previewContainer.innerHTML = "";
+
+    imageCount.style.display = "none";
+
+    const files =
+        Array.from(this.files);
+
+
+    if (files.length === 0) {
+        return;
+    }
+
+
+    if (files.length > maxImages) {
+
+        alert(
+            "You can upload a maximum of 5 images."
+        );
+
+        this.value = "";
+
+        return;
+    }
+
+
+    let validFiles = [];
+
+
+    files.forEach(function (file, index) {
+
+        if (!allowedTypes.includes(file.type)) {
+
+            alert(
+                `"${file.name}" is not a supported image format.\n\nPlease use JPG, JPEG, PNG or WEBP.`
+            );
+
+            return;
+        }
+
+
+        if (file.size > maxFileSize) {
+
+            alert(
+                `"${file.name}" is larger than 5 MB.\n\nPlease select an image that is 5 MB or smaller.`
+            );
+
+            return;
+        }
+
+
+        validFiles.push(file);
+
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload = function (event) {
+
+            const column =
+                document.createElement("div");
+
+            column.className =
+                "col-6 col-md-4 col-lg-3";
+
+
+            column.innerHTML = `
+
+                <div class="card border-0 shadow-sm h-100">
+
+                    <img
+                        src="${event.target.result}"
+                        class="card-img-top"
+                        alt="Property image ${index + 1}"
+                        style="
+                            height: 180px;
+                            object-fit: cover;
+                        "
+                    >
+
+                    <div class="card-body p-2 text-center">
+
+                        ${
+                            index === 0
+                            ? '<span class="badge bg-primary">Main Image</span>'
+                            : ''
+                        }
+
+                        <div class="small text-muted mt-1">
+                            Image ${index + 1}
+                        </div>
+
+                        <div
+                            class="small text-truncate mt-1"
+                            title="${file.name}"
+                        >
+                            ${file.name}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+
+            previewContainer.appendChild(column);
+
+        };
+
+
+        reader.readAsDataURL(file);
+
+    });
+
+
+    if (validFiles.length > 0) {
+
+        imageCount.style.display =
+            "block";
+
+        imageCount.textContent =
+            `${validFiles.length} image${validFiles.length > 1 ? "s" : ""} selected`;
+
+    }
+
+});
+
+
+
+/*
+    Validate selected images again
+    before submitting.
+*/
+
+propertyForm.addEventListener("submit", function (event) {
+
+    const files =
+        Array.from(imageInput.files);
+
+
+    if (files.length === 0) {
+
+        event.preventDefault();
+
+        alert(
+            "Please select at least one property image."
+        );
+
+        return;
+
+    }
+
+
+    if (files.length > maxImages) {
+
+        event.preventDefault();
+
+        alert(
+            "You can upload a maximum of 5 images."
+        );
+
+        return;
+
+    }
+
+
+    for (const file of files) {
+
+        if (!allowedTypes.includes(file.type)) {
+
+            event.preventDefault();
+
+            alert(
+                `"${file.name}" is not a supported image format.`
+            );
+
+            return;
+
+        }
+
+
+        if (file.size > maxFileSize) {
+
+            event.preventDefault();
+
+            alert(
+                `"${file.name}" is larger than 5 MB.`
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    /*
+        Disable button after successful
+        client-side validation.
+    */
+
+    submitButton.disabled = true;
+
+    submitButton.innerHTML =
+        "Uploading Images...";
+
+});
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Manage Properties - NestFind</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <style>
+
+        body {
+            background: #f5f7fb;
+            font-family: Arial, sans-serif;
+        }
+
+        .page-header {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+        }
+
+        .table-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+        }
+
+        .table th {
+            white-space: nowrap;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+
+            .table-card {
+                padding: 15px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container-fluid py-4 px-3 px-md-4">
+
+    <!-- Header -->
+
+    <div class="page-header">
+
+        <div class="d-flex justify-content-between
+                    align-items-center flex-wrap gap-3">
+
+            <div>
+
+                <h2 class="mb-1">
+                    Manage Properties
+                </h2>
+
+                <p class="text-muted mb-0">
+                    View, edit and delete NestFind properties
+                </p>
+
+            </div>
+
+            <div class="d-flex gap-2">
+
+                <a
+                    href="{{ url_for('admin_dashboard') }}"
+                    class="btn btn-secondary">
+
+                    Dashboard
+
+                </a>
+
+                <a
+                    href="{{ url_for('admin_add_property') }}"
+                    class="btn btn-primary">
+
+                    + Add Property
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Flash Messages -->
+
+    {% with messages = get_flashed_messages(
+        with_categories=true
+    ) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div
+                    class="alert alert-{{ category }}
+                           alert-dismissible fade show">
+
+                    {{ message }}
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                    </button>
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <!-- Properties -->
+
+    <div class="table-card">
+
+        {% if properties %}
+
+        <div class="table-responsive">
+
+            <table
+                class="table table-hover align-middle">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th>ID</th>
+
+                        <th>Property</th>
+
+                        <th>Purpose</th>
+
+                        <th>Type</th>
+
+                        <th>Price</th>
+
+                        <th>Location</th>
+
+                        <th>Status</th>
+
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for property in properties %}
+
+                    <tr>
+
+                        <!-- ID -->
+
+                        <td>
+
+                            #{{ property.id }}
+
+                        </td>
+
+
+                        <!-- Property -->
+
+                        <td>
+
+                            <strong>
+                                {{ property.title }}
+                            </strong>
+
+                            <br>
+
+                            <small class="text-muted">
+
+                                {% if property.bedrooms %}
+                                    {{ property.bedrooms }} BHK
+                                {% endif %}
+
+                                {% if property.area %}
+                                    • {{ property.area }} sq.ft
+                                {% endif %}
+
+                            </small>
+
+                        </td>
+
+
+                        <!-- Purpose -->
+
+                        <td>
+
+                            {% if property.purpose == "rent" %}
+
+                                <span class="badge bg-info text-dark">
+                                    Rent
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-primary">
+                                    Sale
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Type -->
+
+                        <td>
+
+                            {{ property.property_type }}
+
+                        </td>
+
+
+                        <!-- Price -->
+
+                        <td>
+
+                            <strong>
+                                ₹{{ "{:,.0f}".format(
+                                    property.price|float
+                                ) }}
+                            </strong>
+
+                        </td>
+
+
+                        <!-- Location -->
+
+                        <td>
+
+                            {{ property.location }}
+
+                        </td>
+
+
+                        <!-- Status -->
+
+                        <td>
+
+                            {% if property.status == "available" %}
+
+                                <span class="badge bg-success">
+                                    Available
+                                </span>
+
+                            {% elif property.status == "sold" %}
+
+                                <span class="badge bg-danger">
+                                    Sold
+                                </span>
+
+                            {% elif property.status == "rented" %}
+
+                                <span class="badge bg-warning text-dark">
+                                    Rented
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+                                    Inactive
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Actions -->
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <!-- View -->
+
+                                {% if property.status == "available" %}
+
+                                    <a
+                                        href="{{ url_for(
+                                            'property_details',
+                                            property_id=property.id
+                                        ) }}"
+                                        target="_blank"
+                                        class="btn btn-sm btn-outline-primary">
+
+                                        View
+
+                                    </a>
+
+                                {% endif %}
+
+
+                                <!-- Edit -->
+
+                                <a
+                                    href="{{ url_for(
+                                        'admin_edit_property',
+                                        property_id=property.id
+                                    ) }}"
+                                    class="btn btn-sm btn-outline-warning">
+
+                                    Edit
+
+                                </a>
+
+
+                                <!-- Delete -->
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for(
+                                        'admin_delete_property',
+                                        property_id=property.id
+                                    ) }}"
+                                    onsubmit="return confirm(
+                                        'Are you sure you want to delete this property? This action cannot be undone.'
+                                    );">
+
+                                    <!-- CSRF Protection -->
+
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="{{ csrf_token() }}"
+                                    >
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-sm btn-outline-danger">
+
+                                        Delete
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+            <div class="text-center py-5">
+
+                <h5>
+                    No properties found
+                </h5>
+
+                <p class="text-muted">
+                    Add your first property to NestFind.
+                </p>
+
+                <a
+                    href="{{ url_for('admin_add_property') }}"
+                    class="btn btn-primary">
+
+                    + Add Property
+
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,225 @@
+<nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top nestfind-navbar">
+
+    <div class="container">
+
+        <!-- ============================= -->
+        <!-- LOGO -->
+        <!-- ============================= -->
+
+        <a
+            class="navbar-brand fw-bold"
+            href="{{ url_for('home') }}"
+        >
+            🏠 Nest<span>Find</span>
+        </a>
+
+
+        <!-- ============================= -->
+        <!-- MOBILE MENU BUTTON -->
+        <!-- ============================= -->
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#nestfindNavbar"
+            aria-controls="nestfindNavbar"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+
+        <!-- ============================= -->
+        <!-- NAVIGATION -->
+        <!-- ============================= -->
+
+        <div
+            class="collapse navbar-collapse"
+            id="nestfindNavbar"
+        >
+
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+
+
+                <!-- ============================= -->
+                <!-- HOME -->
+                <!-- ============================= -->
+
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link"
+                        href="{{ url_for('home') }}"
+                    >
+                        Home
+                    </a>
+
+                </li>
+
+
+                <!-- ============================= -->
+                <!-- BUY -->
+                <!-- ============================= -->
+
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link"
+                        href="{{ url_for('properties', purpose='sale') }}"
+                    >
+                        Buy
+                    </a>
+
+                </li>
+
+
+                <!-- ============================= -->
+                <!-- RENT -->
+                <!-- ============================= -->
+
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link"
+                        href="{{ url_for('properties', purpose='rent') }}"
+                    >
+                        Rent
+                    </a>
+
+                </li>
+
+
+                <!-- ============================= -->
+                <!-- ABOUT -->
+                <!-- ============================= -->
+
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link"
+                        href="{{ url_for('home') }}#about"
+                    >
+                        About
+                    </a>
+
+                </li>
+
+
+                <!-- ============================= -->
+                <!-- CONTACT -->
+                <!-- ============================= -->
+
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link"
+                        href="{{ url_for('home') }}#contact"
+                    >
+                        Contact
+                    </a>
+
+                </li>
+
+
+                <!-- ============================= -->
+                <!-- CUSTOMER AUTHENTICATION -->
+                <!-- ============================= -->
+
+                {% if session.get("user_id") %}
+
+
+                    <!-- ============================= -->
+                    <!-- DASHBOARD -->
+                    <!-- ============================= -->
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="{{ url_for('dashboard') }}"
+                        >
+                            👤 Dashboard
+                        </a>
+
+                    </li>
+
+
+                    <!-- ============================= -->
+                    <!-- LOGOUT -->
+                    <!-- ============================= -->
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="{{ url_for('logout') }}"
+                        >
+                            Logout
+                        </a>
+
+                    </li>
+
+
+                {% else %}
+
+
+                    <!-- ============================= -->
+                    <!-- LOGIN -->
+                    <!-- ============================= -->
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="{{ url_for('login') }}"
+                        >
+                            Login
+                        </a>
+
+                    </li>
+
+
+                    <!-- ============================= -->
+                    <!-- REGISTER -->
+                    <!-- ============================= -->
+
+                    <li class="nav-item">
+
+                        <a
+                            class="btn btn-primary btn-sm px-3 mt-2 mt-lg-0"
+                            href="{{ url_for('register') }}"
+                        >
+                            Register
+                        </a>
+
+                    </li>
+
+
+                {% endif %}
+
+
+                <!-- ============================= -->
+                <!-- ADMIN LOGIN -->
+                <!-- ============================= -->
+
+                <li class="nav-item ms-lg-2">
+
+                    <a
+                        class="btn btn-outline-dark btn-sm px-3 mt-2 mt-lg-0"
+                        href="{{ url_for('admin_login') }}"
+                    >
+                        Admin Login
+                    </a>
+
+                </li>
+
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</nav>
